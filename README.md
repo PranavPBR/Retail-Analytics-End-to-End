@@ -6,7 +6,7 @@ An end-to-end Retail Analytics project using Python, SQL, and Power BI
 
 This repository presents a complete analytics workflow built on top of the Online Retail II dataset from the UCI Machine Learning Repository
 
-**Dataset link:** https://archive.ics.uci.edu/dataset/502/online+retail+ii 
+**Dataset link:** [retail data set online](https://archive.ics.uci.edu/dataset/502/online+retail+ii)
 
 The goal of this project is to demonstrate how raw retail data can be transformed into actionable business intelligence insights through a modern multi-tool pipeline. The workflow includes:
 
