@@ -1,4 +1,4 @@
-#Retail-Analytics-End-to-End
+**Retail-Analytics-End-to-End**
 
 End-to-end Online Retail Analytics project using Python, SQL, and Power BI — includes ETL, data cleaning, SQL modeling, KPI calculations, and an interactive dashboard.
 
@@ -70,7 +70,7 @@ Store clean data in a SQLite database (online_retail_clean.db)
 
 **Python ETL Code (Summary)**
 
-`df1 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2009-2010")
+'''df1 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2009-2010")
 df2 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2010-2011")
 
 df = pd.concat([df1, df2], ignore_index=True)
@@ -87,6 +87,5 @@ df.columns = df.columns.str.lower().str.replace(" ", "_")
 
 conn = sqlite3.connect("online_retail_clean.db")
 df.to_sql("retail_data", conn, index=False, if_exists="replace")
-conn.close()
-`
+conn.close()'''
 
