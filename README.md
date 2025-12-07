@@ -42,48 +42,68 @@ All preprocessing steps are handled in Python to create a clean, analysis-ready 
 
 **Steps Performed**
 
-    Import both sheets from the Excel file
+    Import the raw Excel file (single sheet containing all transactions).
     
-    Combine the sheets into a unified DataFrame
+    Remove rows with missing CustomerID, since customer-level analysis depends on it.
     
-    Remove nulls & duplicates
+    Drop duplicate records to avoid double-counting sales.
     
-    Convert InvoiceDate into proper datetime
+    Convert InvoiceDate to proper datetime for time-series analysis.
     
-    Engineer time-based features:
+    Engineer new time-based columns:
+    
         Year
-        Month
-        Week number
-        Day of week
-        Quarter
         
-    Convert Customer ID to integer
+        Month
+        
+        Week
+        
+        DayOfWeek
     
-    Standardize column names (snake_case)
+    Quarter
     
-    Store clean data in a SQLite database (online_retail_clean.db)
+    Compute TotalPrice = Quantity × UnitPrice for revenue calculations.
+    
+    Standardize column names to snake_case for SQL and Power BI compatibility.
+    
+    Store the processed data in a local SQLite database (online_retail_clean.db).
 
 **Python ETL Code (Summary)**
 
 ```
-df1 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2009-2010")
-df2 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2010-2011")
+import pandas as pd
+import sqlite3
 
-df = pd.concat([df1, df2], ignore_index=True)
-df = df.dropna().drop_duplicates().copy()
+# Load the Excel dataset (single sheet)
+df = pd.read_excel("online_retail.xlsx")
 
+# Remove rows without CustomerID
+df = df.dropna(subset=["CustomerID"]).copy()
+
+# Remove duplicates
+df = df.drop_duplicates().copy()
+
+# Convert InvoiceDate to datetime
 df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
+
+# Feature engineering
 df["Year"] = df["InvoiceDate"].dt.year
 df["Month"] = df["InvoiceDate"].dt.month
 df["Week"] = df["InvoiceDate"].dt.isocalendar().week
 df["DayOfWeek"] = df["InvoiceDate"].dt.day_name()
 df["Quarter"] = df["InvoiceDate"].dt.quarter
 
+# Total price per line (revenue)
+df["TotalPrice"] = df["Quantity"] * df["UnitPrice"]
+
+# Standardize column names
 df.columns = df.columns.str.lower().str.replace(" ", "_")
 
+# Save to SQLite
 conn = sqlite3.connect("online_retail_clean.db")
 df.to_sql("retail_data", conn, index=False, if_exists="replace")
 conn.close()
+
 ```
 
 
