@@ -150,6 +150,7 @@ WHERE quantity < 0;
 Major Dashboard Sections
 
 **KPI Bar (Top Panel)**
+    
     Total Revenue
     Total Quantity Sold
     Revenue per Customer
@@ -158,19 +159,23 @@ Major Dashboard Sections
     Total Returns Count
 
 **Revenue & Sales Trends**
+    
     Month-over-Month and Year-over-Year revenue
     Weekly trend analysis
 
 **Customer Insights**
+    
     Active months
     Customer segmentation
     Total spend and LTV metrics
 
 **Product & Pricing Behavior**
+    
     Best-selling products
     AOV & Average price over time
 
 **Returns Analysis**
+    
     Returns by country
     Returns vs revenue
 
