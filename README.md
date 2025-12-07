@@ -116,12 +116,22 @@ Using SQLite, the cleaned dataset is queried to produce structured domain-specif
 Contains transaction-level revenue, quantities, and date attributes for positive-quantity invoices.
 
 ```
-SELECT customer_id, invoice, description, country, year, month, week,
-       price, quantity AS total_quantity,
-       quantity * price AS total_revenue,
-       invoicedate
+SELECT 
+    invoice_no,
+    customerid,
+    stockcode,
+    description,
+    country,
+    year,
+    month,
+    week,
+    quantity AS total_quantity,
+    unitprice,
+    totalprice AS total_revenue,
+    invoicedate
 FROM retail_data
 WHERE quantity > 0;
+
 ```
 
 2️⃣ Top Products by Quantity
@@ -129,11 +139,15 @@ WHERE quantity > 0;
 Ranks products based on sales volume.
 
 ```
-SELECT invoice, stockcode, description,
-       quantity AS total_quantity
+SELECT 
+    stockcode,
+    description,
+    SUM(quantity) AS total_quantity
 FROM retail_data
 WHERE quantity > 0
+GROUP BY stockcode, description
 ORDER BY total_quantity DESC;
+
 ```
 
 3️⃣ Customer Activity / Lifetime Value
@@ -141,14 +155,17 @@ ORDER BY total_quantity DESC;
 Evaluates customer engagement patterns.
 
 ```
-SELECT customer_id,
-       invoice,
-       quantity * price AS total_spent,
-       MAX(invoicedate) AS last_purchase_date,
-       COUNT(DISTINCT year || '-' || month) AS active_months
+SELECT 
+    customerid,
+    COUNT(DISTINCT invoice_no) AS invoice_count,
+    SUM(totalprice) AS total_spent,
+    MAX(invoicedate) AS last_purchase_date,
+    COUNT(DISTINCT year || '-' || month) AS active_months
 FROM retail_data
-GROUP BY customer_id
+WHERE quantity > 0
+GROUP BY customerid
 ORDER BY total_spent DESC;
+
 ```
 
 4️⃣ Returns Summary
@@ -156,13 +173,21 @@ ORDER BY total_spent DESC;
 Captures negative-quantity transactions.
 
 ```
-SELECT customer_id, invoice, country, year, month, week,
-       stockcode, description, price,
-       quantity AS total_returns_quantity,
-       quantity * price AS total_returns_value,
-       invoicedate
+SELECT 
+    invoice_no,
+    customerid,
+    stockcode,
+    description,
+    country,
+    year,
+    month,
+    week,
+    quantity AS return_quantity,
+    totalprice AS return_value,
+    invoicedate
 FROM retail_data
 WHERE quantity < 0;
+
 ```
 
 **Part 3 — Power BI Dashboard**
