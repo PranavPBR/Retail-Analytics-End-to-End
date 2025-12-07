@@ -42,30 +42,30 @@ All preprocessing steps are handled in Python to create a clean, analysis-ready 
 
 **Steps Performed**
 
-Import both sheets from the Excel file
-
+    Import both sheets from the Excel file
+    
     Combine the sheets into a unified DataFrame
-    
+        
     Remove nulls & duplicates
-    
+        
     Convert InvoiceDate into proper datetime
-    
+        
     Engineer time-based features:
-    
+        
         Year
-        
+                
         Month
-        
+                
         Week number
-        
+                
         Day of week
-        
+                
         Quarter
-    
+        
     Convert Customer ID to integer
-    
+        
     Standardize column names (snake_case)
-    
+        
     Store clean data in a SQLite database (online_retail_clean.db)
 
 **Python ETL Code (Summary)**
