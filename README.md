@@ -95,7 +95,8 @@ Using SQLite, the cleaned dataset is queried to produce structured domain-specif
 
 Contains transaction-level revenue, quantities, and date attributes for positive-quantity invoices.
 
-```SELECT customer_id, invoice, description, country, year, month, week,
+```
+SELECT customer_id, invoice, description, country, year, month, week,
        price, quantity AS total_quantity,
        quantity * price AS total_revenue,
        invoicedate
@@ -107,7 +108,8 @@ WHERE quantity > 0;
 
 Ranks products based on sales volume.
 
-```SELECT invoice, stockcode, description,
+```
+SELECT invoice, stockcode, description,
        quantity AS total_quantity
 FROM retail_data
 WHERE quantity > 0
@@ -118,7 +120,8 @@ ORDER BY total_quantity DESC;
 
 Evaluates customer engagement patterns.
 
-```SELECT customer_id,
+```
+SELECT customer_id,
        invoice,
        quantity * price AS total_spent,
        MAX(invoicedate) AS last_purchase_date,
@@ -132,7 +135,8 @@ ORDER BY total_spent DESC;
 
 Captures negative-quantity transactions.
 
-```SELECT customer_id, invoice, country, year, month, week,
+```
+SELECT customer_id, invoice, country, year, month, week,
        stockcode, description, price,
        quantity AS total_returns_quantity,
        quantity * price AS total_returns_value,
