@@ -1,37 +1,46 @@
 import pandas as pd
 import sqlite3
 
-# Read both sheets
-df1 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2009-2010")
-df2 = pd.read_excel("online_retail_II.xlsx", sheet_name="Year 2010-2011")
+# -------------------------------
+# Load the Online Retail dataset
+# -------------------------------
+df = pd.read_excel("online_retail.xlsx")   # Update file name if needed
 
-# Combine both sheets
-df_comb = pd.concat([df1, df2], ignore_index=True)
+# -------------------------------
+# Data Cleaning
+# -------------------------------
 
-## CLEANING
-# Drop NaNs and make a deep copy to avoid SettingWithCopyWarning
-df_nonan = df_comb.dropna().copy()
+# Remove rows without CustomerID
+df = df.dropna(subset=["CustomerID"]).copy()
 
-# Drop duplicates
-df_clean = df_nonan.drop_duplicates().copy()
+# Remove duplicates
+df = df.drop_duplicates().copy()
 
 # Convert InvoiceDate to datetime
-df_clean["InvoiceDate"] = pd.to_datetime(df_clean["InvoiceDate"], errors="coerce")
+df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
 
-# Create new columns extracting the year, month, and others from InvoiceDate
-df_clean["Year"] = df_clean["InvoiceDate"].dt.year
-df_clean["Month"] = df_clean["InvoiceDate"].dt.month
-df_clean["DayOfWeek"] = df_clean["InvoiceDate"].dt.day_name()
-df_clean['Week'] = df_clean['InvoiceDate'].dt.isocalendar().week
-df_clean['Quarter'] = df_clean['InvoiceDate'].dt.quarter
+# -------------------------------
+# Feature Engineering
+# -------------------------------
+df["Year"] = df["InvoiceDate"].dt.year
+df["Month"] = df["InvoiceDate"].dt.month
+df["Week"] = df["InvoiceDate"].dt.isocalendar().week
+df["DayOfWeek"] = df["InvoiceDate"].dt.day_name()
+df["Quarter"] = df["InvoiceDate"].dt.quarter
 
-# Convert Customer ID to int
-df_clean["Customer ID"] = df_clean["Customer ID"].astype("int")
+# Compute total price (Line-level revenue)
+df["TotalPrice"] = df["Quantity"] * df["UnitPrice"]
 
-# Renaming columns for SQL friendliness
-df_clean.columns = df_clean.columns.str.lower().str.replace(" ", "_")
+# -------------------------------
+# Rename columns for SQL compatibility
+# -------------------------------
+df.columns = df.columns.str.lower().str.replace(" ", "_")
 
-## Save with SQLite
+# -------------------------------
+# Save to SQLite database
+# -------------------------------
 conn = sqlite3.connect("online_retail_clean.db")
-df_clean.to_sql("retail_data", conn, index=False, if_exists="replace")
+df.to_sql("retail_data", conn, index=False, if_exists="replace")
 conn.close()
+
+print("ETL Process Completed: Data cleaned and loaded into SQLite database.")
