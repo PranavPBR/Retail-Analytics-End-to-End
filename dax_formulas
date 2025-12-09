@@ -1,25 +1,54 @@
-Total Revenue = SUM(sales_summary[total_revenue])
+---------------------------------------------------------
+CORE SALES MEASURES
+---------------------------------------------------------
 
-Total Quantity Sold = SUM(sales_summary[total_quantity])
+--Total Revenue
+Total Revenue = SUM ( 'Online Retail'[totalprice] )
 
-Total Invoices = DISTINCTCOUNT('sales_summary'[invoice])
+-- Total Quantity Sold
+Total Quantity Sold = SUM ( 'Online Retail'[Quantity] )
 
-Revenue per Costumer = [Total Revenue]/[Total Costumers]
+-- Total Invoices
+Total Invoices = DISTINCTCOUNT ( 'Online Retail'[invoice_no] )
 
-Average Order Value = [Total Revenue] / [Total Invoices]
+-- Total Customers
+Total Customers = DISTINCTCOUNT ( 'Online Retail'[customerid] )
 
-Total Returns Value = SUM(returns_summary[total_returns_value])
+-- Revenue per Customer
+Revenue per Customer = DIVIDE ( [Total Revenue], [Total Customers] )
 
-Total Returns Count = COUNT(returns_summary[total_returns_quantity])
+-- Average Order Value
+Average Order Value = DIVIDE ( [Total Revenue], [Total Invoices] )
 
-Returns Percentage = DIVIDE([Total Returns Value], [Total Revenue])
+---------------------------------------------------------
+-- RETURNS MEASURES
+---------------------------------------------------------
 
-Products Count = COUNT(products_by_quantity[total_quantity])
+-- Total Returns Value
+Total Returns Value = SUM ( Returns[totalprice] )
 
-Revenue per Product = DIVIDE([Total Revenue], [Products Count])
+-- Total Returns Count
+Total Returns Count = COUNT ( Returns[Quantity] )
 
-Number of Costumers = DISTINCTCOUNT(customer_activity[customer_id])
+-- Returns Percentage
+Returns Percentage = DIVIDE ( [Total Returns Value], [Total Revenue] )
 
-Customer Type = IF([active_months] <= 2, "Inactive", 
-                IF([active_months] <= 5, "Normal", 
-                "Active"))  
+---------------------------------------------------------
+-- CUSTOMER SEGMENTATION MEASURE
+---------------------------------------------------------
+
+-- Customer Active Months (example pattern)
+Customer Active Months =
+CALCULATE (
+    DISTINCTCOUNT ( 'Online Retail'[Month] ),
+    ALLEXCEPT ( 'Online Retail', 'Online Retail'[customerid] )
+)
+
+-- Customer Type
+Customer Type =
+SWITCH (
+    TRUE(),
+    [Customer Active Months] <= 2, "Inactive",
+    [Customer Active Months] <= 5, "Normal",
+    "Active"
+)
