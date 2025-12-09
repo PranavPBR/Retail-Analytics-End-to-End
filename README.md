@@ -20,7 +20,9 @@ This mirrors how real analytics teams build reliable, scalable reporting systems
 
 **Dataset Description**
 
-The dataset contains two years of historical e-commerce transactions (2009–2010 and 2010–2011) from a UK-based online retailer. The original file includes:
+The dataset used in this project is the UCI Online Retail Dataset, containing over 540K transaction records from an online UK gift retailer.
+
+The original file includes:
 
 Invoice records
 
