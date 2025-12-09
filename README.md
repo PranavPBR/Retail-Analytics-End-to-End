@@ -194,56 +194,114 @@ WHERE quantity < 0;
 
 Major Dashboard Sections
 
-**KPI Bar (Top Panel)**
-    
-    Total Revenue
-    Total Quantity Sold
-    Revenue per Customer
-    Returns %
-    Total Returns Value
-    Total Returns Count
+**Dashboard Visuals Used**
 
-**Revenue & Sales Trends**
-    
-    Month-over-Month and Year-over-Year revenue
-    Weekly trend analysis
+**KPI Cards**
+```
+- Total Revenue (Card)
+- Total Quantity Sold (Card)
+- Total Invoices (Card)
+- Total Customers (Card)
+- Revenue per Customer (Card)
+- Total Returns Value (Card)
+- Returns Percentage (Card)
+```
 
-**Customer Insights**
-    
-    Active months
-    Customer segmentation
-    Total spend and LTV metrics
+**Trend Charts**
+```
+- Line Chart: Total Revenue by Month Name
+- Line Chart: Total Revenue by Week of Year
+- Line Chart: Average Unit Price by Month Name
+```
 
-**Product & Pricing Behavior**
-    
-    Best-selling products
-    AOV & Average price over time
+**Revenue Breakdown**
+```
+- Column Chart: Total Revenue by Quarter
+- Bar Chart: Top 10 Quantity Sold by Description
+- Bar Chart: Top 10 Revenue by Description
+- Table: customerid vs Total Revenue
+```
+
+**Customer Analysis**
+```
+- Bar Chart: Total Customers by Country
+```
 
 **Returns Analysis**
-    
-    Returns by country
-    Returns vs revenue
+```
+- Bar Chart: Total Returns Value by Description
+- Column Chart: Returns Percentage by Country
+- Combo Chart: Total Returns Value and Total Revenue by Month Name
+```
 
+**Filters / Slicers**
+```
+- Country
+- Year (2010, 2011)
+- Month Name
+```
 **Key DAX Measures Used**
 
 ```
-Total Revenue = SUM(sales_summary[total_revenue])
+-- CORE SALES MEASURES
 
-Total Quantity Sold = SUM(sales_summary[total_quantity])
+-- Total Revenue
+Total Revenue =
+SUM ( 'Online Retail'[totalprice] )
 
-Total Invoices = DISTINCTCOUNT(sales_summary[invoice])
+-- Total Quantity Sold
+Total Quantity Sold =
+SUM ( 'Online Retail'[Quantity] )
 
-Revenue Per Customer = [Total Revenue] / DISTINCTCOUNT(customer_activity[customer_id])
+-- Total Invoices
+Total Invoices =
+DISTINCTCOUNT ( 'Online Retail'[invoice_no] )
 
-Average Order Value = [Total Revenue] / [Total Invoices]
+-- Total Customers
+Total Customers =
+DISTINCTCOUNT ( 'Online Retail'[customerid] )
 
-Total Returns Value = SUM(returns_summary[total_returns_value])
+-- Revenue per Customer
+Revenue per Customer =
+DIVIDE ( [Total Revenue], [Total Customers] )
 
-Returns Percentage = DIVIDE([Total Returns Value], [Total Revenue])
+-- Average Order Value
+Average Order Value =
+DIVIDE ( [Total Revenue], [Total Invoices] )
 
-Products Count = COUNT(products_by_quantity[total_quantity])
+-- RETURNS MEASURES
 
-Revenue Per Product = DIVIDE([Total Revenue], [Products Count])
+-- Total Returns Value
+Total Returns Value =
+SUM ( Returns[totalprice] )
+
+-- Total Returns Count
+Total Returns Count =
+COUNT ( Returns[Quantity] )
+
+-- Returns Percentage
+Returns Percentage =
+DIVIDE ( [Total Returns Value], [Total Revenue] )
+
+
+-- CUSTOMER SEGMENTATION MEASURE
+
+-- Customer Active Months (example pattern)
+Customer Active Months =
+CALCULATE (
+    DISTINCTCOUNT ( 'Online Retail'[Month] ),
+    ALLEXCEPT ( 'Online Retail', 'Online Retail'[customerid] )
+)
+
+-- Customer Type
+Customer Type =
+SWITCH (
+    TRUE(),
+    [Customer Active Months] <= 2, "Inactive",
+    [Customer Active Months] <= 5, "Normal",
+    "Active"
+)
+
 ```
 
 Business Insights Discovered
